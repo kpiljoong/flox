@@ -1,0 +1,17 @@
+input:
+  type: file
+  path: /tmp/app.log
+  track_offset: true
+
+filters:
+  - type: json
+    drop_fields: ["secret"]
+    rename_fields:
+      msg: message
+    add_fields:
+      env: test
+
+output:
+  type: stdout
+  target: ""
+

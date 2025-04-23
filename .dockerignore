@@ -1,0 +1,17 @@
+# Ignore unnecessary files for Docker context
+bin/
+vendor/
+
+# Git + IDE
+.git
+.gitignore
+.idea/
+.vscode/
+
+# Output & archives
+*.zip
+*.log
+*.tar.gz
+
+*.md
+*.test

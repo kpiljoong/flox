@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: flox
+  labels:
+    app: flox
+spec:
+  selector:
+    matchLabels:
+      app: flox
+  template:
+    metadata:
+      labels:
+        app: flox
+    spec:
+      containers:
+        - name: flox
+          image: flox:dev-local
+          imagePullPolicy: IfNotPresent
+          args: ["--config", "/etc/flox/pipeline.yaml"]
+          env:
+            - name: FLOX_ENV
+              value: "kind-local"
+          volumeMounts:
+            - name: varlog
+              mountPath: /var/log
+            - name: config
+              mountPath: /etc/flox
+        - name: debug
+          image: busybox
+          command: ["/bin/sh", "-c", "sleep 10000"]
+          volumeMounts:
+            - name: varlog
+              mountPath: /var/log
+      volumes:
+        - name: varlog
+          hostPath:
+            path: /var/log
+        - name: config
+          configMap:
+            name: flox-config

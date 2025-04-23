@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flox-config
+data:
+  pipeline.yaml: |
+    input:
+      namespace: "flox-test"
+      type: file
+      path: "/var/log/pods/*/*/*.log"
+      track_offset: true
+      start_from: latest
+    filters:
+      - type: json
+        drop_fields: ["password", "token", "secret"]
+        rename:
+          "msg": "message"
+        add_fields:
+          "env": "${FLOX_ENV}"
+          "host": "${HOSTNAME}"
+    output:
+      type: loki
+      target: http://loki:3100

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flox
+  labels:
+    app: flox
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flox
+  template:
+    metadata:
+      labels:
+        app: flox
+    spec:
+      # Create log file before flox starts
+      initContainers:
+        - name: init-logfile
+          image: busybox
+          command: ["sh", "-c", "touch /var/log/app.log"]
+          volumeMounts:
+            - name: logs
+              mountPath: /var/log
+      containers:
+        - name: flox
+          image: flox:dev
+          imagePullPolicy: Never
+          args: ["--config", "/etc/flox/pipeline.yaml"]
+          ports:
+            - containerPort: 2112
+          volumeMounts:
+            - name: flox-config
+              mountPath: /etc/flox
+            - name: logs
+              mountPath: /var/log
+      volumes:
+        - name: flox-config
+          configMap:
+            name: flox-config
+        - name: logs
+          emptyDir: {}

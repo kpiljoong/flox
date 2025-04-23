@@ -1,0 +1,18 @@
+input:
+  type: file
+  path: "/var/log/pods/*/*/*.log"
+  track_offset: true
+  start_from: latest
+
+filters:
+  - type: json
+    drop_fields: ["password", "secret", "token"]
+    rename:
+      "msg": "message"
+    add_fields:
+      "processed_by": "flox"
+      "env": "${FLOX_ENV}"
+      "host": "${HOSTNAME}"
+
+output:
+  type: stdout

@@ -1,0 +1,50 @@
+# Go build artifacts
+/bin/
+/flox
+*.test
+*.exe
+*.out
+*.log
+
+# Vendor folder
+vendor/
+
+# IDE/editor-specific
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# OS-generated files
+Thumbs.db
+
+# Logs/state/output
+*.log
+*.pid
+*.bak
+*.tmp
+
+# Dependency/package cache
+go.sum
+
+# Kind/Docker
+*.tar
+*.img
+*.gz
+
+# Flox runtime artifacts
+.flox.state
+app.log
+
+# K8s manifests taht are generated or local-only
+manifests/generated/
+kustomize/overlays/local/
+
+# Test-only artifacts
+#/internal/**/testdata/
+coverage.out
+*.prof
+*.cov
+
+# GitHub or CLI
+#.github/

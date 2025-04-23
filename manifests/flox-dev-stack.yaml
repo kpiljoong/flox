@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: flox-dev-stack
+spec:
+  restartPolicy: Never
+  volumes:
+    - name: logs
+      emptyDir: {}
+    - name: config
+      configMap:
+        name: flox-config
+  initContainers:
+    - name: init-logfile
+      image: busybox
+      command: ["sh", "-c", "touch /var/log/app.log"]
+      volumeMounts:
+        - name: logs
+          mountPath: /var/log
+  containers:
+    - name: flox
+      image: flox:dev
+      imagePullPolicy: Never
+      args: ["--config", "/etc/flox/pipeline.yaml"]
+      ports:
+        - containerPort: 2112
+      volumeMounts:
+        - name: logs
+          mountPath: /var/log
+        - name: config
+          mountPath: /etc/flox
+    - name: file-appender
+      image: curlimages/curl:latest
+      securityContext:
+        runAsUser: 0
+      command: ["/bin/sh", "-c"]
+      args:
+        - |
+          while true; do
+            echo "{\"msg\":\"test $(date +%T)\", \"level\":\"info\", \"password\":\"1234\""} >> /var/log/app.log;
+            echo " - written";
+            sleep 5;
+          done
+      volumeMounts:
+        - name: logs
+          mountPath: /var/log
